@@ -1,6 +1,6 @@
 # 動画 → MP4 20MB以下 変換
 
-mov / mp4 動画をアップロードすると、mp4に変換し、それぞれ20MB以下になるように長さを切り、まとめてダウンロードできるWebアプリです。
+mov / mp4 動画をアップロードすると、mp4に変換し、それぞれ10MB以下になるように長さを切り、まとめてダウンロードできるWebアプリです。
 
 ## 必要な環境
 
@@ -10,11 +10,13 @@ mov / mp4 動画をアップロードすると、mp4に変換し、それぞれ2
 ### ffmpeg のインストール
 
 **macOS (Homebrew):**
+
 ```bash
 brew install ffmpeg
 ```
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt update && sudo apt install ffmpeg
 ```
@@ -50,4 +52,5 @@ npm start
 - 20MB超えの動画は長さを切り、20MB以下に調整
 - 複数ファイルの一括変換
 - 変換後はmp4形式でダウンロード
+
 # max-10mb-mp4-converter
