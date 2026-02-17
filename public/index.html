@@ -241,6 +241,16 @@
       return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
     }
 
+    function base64ToBlob(base64, mimeType) {
+      const byteCharacters = atob(base64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      return new Blob([byteArray], { type: mimeType });
+    }
+
     function renderFileList() {
       fileList.innerHTML = selectedFiles.map((f, i) => `
         <div class="file-item">
@@ -296,7 +306,7 @@
 
         if (!res.ok) throw new Error(data.error || '変換に失敗しました');
 
-        results.innerHTML = data.results.map(r => {
+        results.innerHTML = data.results.map((r, idx) => {
           if (r.error) {
             return `
               <div class="result-item error">
@@ -307,6 +317,11 @@
               </div>
             `;
           }
+          // Base64データをBlob URLに変換
+          const base64Data = r.data;
+          const blob = base64ToBlob(base64Data, 'video/mp4');
+          const blobUrl = URL.createObjectURL(blob);
+          
           return `
             <div class="result-item">
               <div class="info">
@@ -314,10 +329,17 @@
                 <div class="output">${r.output} ${r.trimmed ? '<span class="badge">トリム済</span>' : ''}</div>
                 <div class="output-size">${formatSize(r.fileSize || 0)}</div>
               </div>
-              <a class="download-btn" href="${r.downloadUrl}" download>ダウンロード</a>
+              <a class="download-btn" href="${blobUrl}" download="${r.output}">ダウンロード</a>
             </div>
           `;
         }).join('');
+        
+        // クリーンアップ: ページを離れるときにBlob URLを解放
+        window.addEventListener('beforeunload', () => {
+          results.querySelectorAll('.download-btn').forEach(link => {
+            if (link.href.startsWith('blob:')) URL.revokeObjectURL(link.href);
+          });
+        });
       } catch (err) {
         results.innerHTML = `<div class="result-item error"><div class="error-msg">${err.message}</div></div>`;
       } finally {
