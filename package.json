@@ -13,5 +13,8 @@
     "fluent-ffmpeg": "^2.1.2",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^1.4.0"
+  },
+  "engines": {
+    "node": ">=18.x"
   }
 }
